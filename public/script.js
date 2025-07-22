@@ -175,14 +175,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function checkCollisions() {
+    const birdElementRect = bird.getBoundingClientRect();
+    const containerRect = gameContainer.getBoundingClientRect();
+
     const birdRect = {
-      left: 60,
-      right: 100,
-      top: gameHeight * (birdPosition / 100),
-      bottom: gameHeight * (birdPosition / 100) + birdHeight,
+      left: birdElementRect.left - containerRect.left,
+      right: birdElementRect.right - containerRect.left,
+      top: birdElementRect.top - containerRect.top,
+      bottom: birdElementRect.bottom - containerRect.top,
     };
 
-    if (birdRect.bottom >= gameHeight * 0.8) {
+    const groundLevel = gameHeight - birdHeight;
+    if (birdRect.bottom >= groundLevel) {
       gameOver();
       return;
     }
@@ -195,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const pipe of pipes) {
       const topPipeRect = pipe.top.getBoundingClientRect();
       const bottomPipeRect = pipe.bottom.getBoundingClientRect();
-      const containerRect = gameContainer.getBoundingClientRect();
 
       const adjustedTop = {
         left: topPipeRect.left - containerRect.left,
@@ -275,7 +278,7 @@ function fetchHighScores() {
       if (existingBox) existingBox.remove();
 
       const highScoreHtml = data
-        .slice(0, 5) // top 5 only (optional)
+        .slice(0, 5)
         .map((row, index) => `<strong>${index + 1}.</strong> ${row.name} - ${row.score}`)
         .join("<br>");
 
@@ -289,4 +292,3 @@ function fetchHighScores() {
       container.appendChild(box);
     });
 }
-
